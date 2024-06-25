@@ -1,0 +1,96 @@
+<!-- index.html -->
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Flappy Bird Game</title>
+  <style>
+    /* Add some basic styling to make the game look nice */
+    body {
+      font-family: Arial, sans-serif;
+      background-color: #f0f0f0;
+    }
+    #game-container {
+      width: 400px;
+      height: 600px;
+      border: 1px solid #ccc;
+      padding: 20px;
+    }
+  </style>
+</head>
+<body>
+  <div id="game-container">
+    <h1>Flappy Bird Game</h1>
+    <input id="name-input" type="text" placeholder="Enter your name">
+    <button id="play-button">Play</button>
+    <canvas id="game-canvas" width="400" height="600"></canvas>
+  </div>
+
+  <script src="script.js"></script>
+</body>
+</html>
+
+<!-- script.js -->
+// Get the canvas element
+const canvas = document.getElementById('game-canvas');
+const ctx = canvas.getContext('2d');
+
+// Set up some constants
+const GRAVITY = 0.25;
+const BIRD_SIZE = 50;
+const PIPE_WIDTH = 80;
+const PIPE_HEIGHT = 400;
+
+// Set up the bird and pipes
+let bird_x = canvas.width / 2;
+let bird_y = canvas.height / 2;
+let bird_vel_y = 0;
+let pipe_list = [];
+
+// Main game loop
+function update() {
+  // Move the bird
+  bird_y += bird_vel_y;
+  bird_vel_y += GRAVITY;
+
+  // Check for collisions with pipes
+  for (let pipe of pipe_list) {
+    if (bird_x + BIRD_SIZE > pipe[0] && bird_x < pipe[0] + PIPE_WIDTH &&
+        bird_y < pipe[1] || bird_y + BIRD_SIZE > pipe[1] + PIPE_HEIGHT) {
+      alert('Game Over');
+      return;
+    }
+  }
+
+  // Add new pipes to the list
+  if (pipe_list.length < 5) {
+    pipe_list.push([canvas.width, canvas.height - PIPE_HEIGHT]);
+  }
+
+  // Move pipes across the screen
+  for (let i = pipe_list.length - 1; i >= 0; i--) {
+    pipe_list[i][0] -= 2;
+    if (pipe_list[i][0] < -PIPE_WIDTH) {
+      delete pipe_list[i];
+    }
+  }
+
+  // Clear the canvas and redraw everything
+  ctx.clearRect(0, 0, canvas.width, canvas.height);
+  ctx.fillStyle = 'black';
+  ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+  // Draw the bird
+  ctx.fillStyle = 'white';
+  ctx.fillRect(bird_x, bird_y, BIRD_SIZE, BIRD_SIZE);
+
+  // Draw the pipes
+  for (let pipe of pipe_list) {
+    ctx.fillRect(pipe[0], pipe[1], PIPE_WIDTH, pipe[1] + PIPE_HEIGHT);
+    ctx.fillRect(pipe[0], pipe[1] + PIPE_HEIGHT + PIPE_GAP_SIZE, PIPE_WIDTH, canvas.height - (pipe[1] + PIPE_HEIGHT + PIPE_GAP_SIZE));
+  }
+
+  // Update the display
+  requestAnimationFrame(update);
+}
+
+update();
