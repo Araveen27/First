@@ -1,0 +1,67 @@
+<!-- index.html -->
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Image Viewer</title>
+  <style>
+    /* Add some basic styling to make the page look nice */
+    body {
+      font-family: Arial, sans-serif;
+      background-color: #f0f0f0;
+    }
+    #image-container {
+      width: 800px;
+      height: 600px;
+      border: 1px solid #ccc;
+      padding: 20px;
+    }
+  </style>
+</head>
+<body>
+  <h1>Image Viewer</h1>
+  <input type="file" id="image-input" accept="image/*">
+  <button id="upload-button">Upload Image</button>
+  <div id="image-container"></div>
+
+  <script src="script.js"></script>
+</body>
+</html>
+
+<!-- script.js -->
+// Get the file input element
+const fileInput = document.getElementById('image-input');
+
+// Get the image container element
+const imageContainer = document.getElementById('image-container');
+
+// Set up the event listener for the file input
+fileInput.addEventListener('change', function(event) {
+  // Get the selected file
+  const file = event.target.files[0];
+
+  // Create a new FileReader object
+  const reader = new FileReader();
+
+  // Set up the event listener for the FileReader
+  reader.onload = function(event) {
+    // Get the image data
+    const imageData = event.target.result;
+
+    // Create a new canvas element
+    const canvas = document.createElement('canvas');
+    canvas.width = imageContainer.offsetWidth;
+    canvas.height = imageContainer.offsetHeight;
+
+    // Get the canvas context
+    const ctx = canvas.getContext('2d');
+
+    // Draw the image on the canvas
+    ctx.drawImage(imageData, 0, 0);
+
+    // Append the canvas to the image container
+    imageContainer.appendChild(canvas);
+  };
+
+  // Read the file
+  reader.readAsDataURL(file);
+});
